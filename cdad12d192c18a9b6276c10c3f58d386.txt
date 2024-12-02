@@ -1,0 +1,394 @@
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+import random
+import math
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from scipy import stats
+
+# Global variable to store Ns
+Ns_value = None
+plot_canvas = None  # Global variable to store the canvas for the plot
+
+
+def summ(mas_p, mas_n, mas_y):
+
+    mas_sum = []
+    mas_n_sum = []
+    mas_y_it = []
+
+    for i in range(0, len(mas_p) - 1):
+        mas_sum.append(mas_p[i]+mas_p[i+1])
+        mas_n_sum.append(mas_n[i]+mas_n[i+1])
+  
+    mas_max = []
+
+    for i in range(0, len(mas_sum)):
+        mas_vr = []
+        for j in range(0, len(mas_p)):
+            if i != j and i != j - 1:
+                mas_vr.append(abs(mas_sum[i] - mas_p[j]))
+        mas_max.append(max(mas_vr))
+    
+    index = mas_max.index(min(mas_max))
+
+    for i in range(0, len(mas_p)-1):
+        if i == index:
+            mas_p[i] = mas_sum[i]
+            mas_n[i] = mas_n_sum[i]
+            
+            mas_p.pop(i+1)
+            mas_n.pop(i+1)
+            
+            mas_y[i] = [mas_y[i],  mas_y[i+1]]
+            mas_y.pop(i+1)
+            
+    return mas_p, mas_n, mas_y
+
+
+
+
+def clean_table(mas_y, mas_ni, mas_n, Ns, Ms, rs):
+    i = 0
+    while i < len(mas_ni):
+        if mas_y[i] < Ms - (Ns - rs) or mas_y[i] > rs:
+            del mas_y[i]
+            del mas_ni[i]
+            del mas_n[i]
+        else:
+            i += 1
+
+
+
+def update_table(mas_y, mas_ni, mas_n):
+    for i in tree.get_children():
+        tree.delete(i)
+    
+    for i in range(len(mas_y)):
+        tree.insert('', 'end', values=(mas_y[i], mas_ni[i], mas_n[i]))
+        
+def update_table2(mas_y, mas_ni, mas_n):
+    for i in tree2.get_children():
+        tree2.delete(i)
+    
+    for i in range(len(mas_y)):
+        tree2.insert('', 'end', values=(mas_y[i], mas_ni[i], mas_n[i]))
+
+def update_table3(accepted, not_accepted):
+    for i in tree3.get_children():
+        tree3.delete(i)
+    
+'''
+
+def run_experiment():
+       
+    accepted = 0
+    not_accepted = 0
+    
+    pov = int(entry_pov.get())
+    
+    for i in range(pov):
+        global Ns_value
+    
+        N = int(entry_N.get())
+        M = int(entry_M.get())
+        r = int(entry_r.get())
+        n = int(entry_kol.get())
+    
+        Ns_value = N
+        Ns = N
+        Ms = M
+        rs = r
+    
+        mas_y = []
+        mas_ni = []
+        mas_n = []
+        mas_x = []
+    
+        for i in range(M+1):
+            mas_y.append(i)
+            mas_ni.append(0)
+            mas_n.append(0)
+    
+        for i in range(n):
+            sv = 0
+            M = Ms
+            N = Ns
+            r = rs
+            while r > 0:
+                P = M/N
+                number = random.random()
+                if number < P:
+                    M -= 1
+                    sv += 1
+                N -= 1
+                r -= 1
+        
+            mas_x.append(sv)
+            index = mas_y.index(sv)
+            mas_ni[index] += 1
+        
+        mas_x.sort()   
+    
+        mas_x_only = list(set(mas_x))
+  
+        for i in mas_x:
+            if i not in mas_x:
+                mas_x_only.append(i)
+    
+        for i in range(len(mas_ni)):
+            mas_n[i] = mas_ni[i]
+        
+        clean_table(mas_y, mas_ni, mas_n, Ns, Ms, rs)
+    
+        mas_p = []
+
+        for i in range(0, len(mas_y)):
+            ni = mas_y[i] 
+            mas_p.append(math.comb(Ms, ni) * math.comb(Ns - Ms, abs(rs - ni)) / math.comb(Ns, rs))
+
+        yy = mas_y
+        pp = mas_p
+        nn = mas_n
+        
+        mas_y_res = mas_y
+        mas_p_res = mas_p
+        mas_n_res = mas_n
+        
+        
+        
+        k = int(entry_k.get())
+        
+        while len(mas_p_res) > k:
+            summ(mas_p_res, mas_n_res, mas_y_res)
+        
+        
+        
+    
+        R0 = 0
+        for i in range(k-1):
+            R0 += ((mas_n_res[i] - n*mas_p_res[i])**2) / (n*mas_p_res[i]) 
+        
+        F_R0 = 1 - stats.chi2.cdf(R0, k - 1)
+        a = float(entry_a.get())
+    
+        if F_R0 < (1 - a):
+            accepted += 1
+        else:
+            not_accepted += 1
+            
+    update_table(yy, pp, nn)
+    #update_table2(mas_y_res, mas_p_res, mas_n_res)
+    
+    for i in tree3.get_children():
+            tree3.delete(i)
+        
+    tree3.insert('', 'end', values=(accepted, not_accepted))
+    
+
+'''
+        
+def run_experiment():
+    accepted = 0
+    not_accepted = 0
+    
+    pov = int(entry_pov.get())
+    
+    for _ in range(pov):
+        global Ns_value
+    
+        N = int(entry_N.get())
+        M = int(entry_M.get())
+        r = int(entry_r.get())
+        n = int(entry_kol.get())
+    
+        Ns_value = N
+        Ns = N
+        Ms = M
+        rs = r
+    
+        mas_y = []
+        mas_ni = []
+        mas_n = []
+        mas_x = []
+    
+        for i in range(M+1):
+            mas_y.append(i)
+            mas_ni.append(0)
+            mas_n.append(0)
+    
+        for _ in range(n):
+            sv = 0
+            M = Ms
+            N = Ns
+            r = rs
+            while r > 0:
+                P = M / N
+                number = random.random()
+                if number < P:
+                    M -= 1
+                    sv += 1
+                N -= 1
+                r -= 1
+        
+            mas_x.append(sv)
+            index = mas_y.index(sv)
+            mas_ni[index] += 1
+        
+        mas_x.sort()   
+    
+        mas_x_only = list(set(mas_x))
+  
+        for i in mas_x:
+            if i not in mas_x:
+                mas_x_only.append(i)
+    
+        for i in range(len(mas_ni)):
+            mas_n[i] = mas_ni[i]
+        
+        clean_table(mas_y, mas_ni, mas_n, Ns, Ms, rs)
+    
+        mas_p = []
+        for i in range(0, len(mas_y)):
+            ni = mas_y[i] 
+            mas_p.append(math.comb(Ms, ni) * math.comb(Ns - Ms, abs(rs - ni)) / math.comb(Ns, rs))
+
+        yy = mas_y
+        pp = mas_p
+        nn = mas_n
+        
+        mas_y_res = mas_y[:]
+        mas_p_res = mas_p[:]
+        mas_n_res = mas_n[:]
+        
+        k = int(entry_k.get())
+        
+        while len(mas_p_res) > k:
+            summ(mas_p_res, mas_n_res, mas_y_res)
+        
+        R0 = 0
+        for i in range(k):
+            R0 += ((mas_n_res[i] - n * mas_p_res[i]) ** 2) / (n * mas_p_res[i])
+        
+        F_R0 = 1 - stats.chi2.cdf(R0, k-1)
+        
+        a = float(entry_a.get())
+    
+        if F_R0 < (1 - a):
+            accepted += 1
+        else:
+            not_accepted += 1
+            
+    update_table(yy, pp, nn)
+    update_table2(mas_y_res, mas_p_res, mas_n_res)
+    
+    for i in tree3.get_children():
+        tree3.delete(i)
+        
+    tree3.insert('', 'end', values=(accepted, not_accepted))
+        
+
+
+
+    
+
+
+    
+def show_image():
+    image_path = "text.png"
+    image = Image.open(image_path)
+    
+    image_window = tk.Toplevel(root)
+    image_window.title("Image Viewer")
+
+    tk_image = ImageTk.PhotoImage(image)
+
+    label = tk.Label(image_window, image=tk_image)
+    label.image = tk_image  
+    label.pack()
+
+root = tk.Tk()
+root.title("Experiment Results")
+
+# Input fields
+entry_N = tk.Entry(root)
+entry_N.grid(row=0, column=1)
+entry_N.config(font=('Arial', 12))  # Increase font size
+
+entry_M = tk.Entry(root)
+entry_M.grid(row=1, column=1)
+entry_M.config(font=('Arial', 12))  # Increase font size
+
+entry_r = tk.Entry(root)
+entry_r.grid(row=2, column=1)
+entry_r.config(font=('Arial', 12))  # Increase font size
+
+entry_kol = tk.Entry(root)
+entry_kol.grid(row=3, column=1)
+entry_kol.config(font=('Arial', 12))  # Increase font size
+
+entry_k = tk.Entry(root)
+entry_k.grid(row=1, column=11)
+entry_k.config(font=('Arial', 12))  # Increase font size
+
+entry_a = tk.Entry(root)
+entry_a.grid(row=2, column=11)
+entry_a.config(font=('Arial', 12))  # Increase font size
+
+entry_pov = tk.Entry(root)
+entry_pov.grid(row=3, column=11)
+entry_pov.config(font=('Arial', 12))  # Increase font size
+
+
+
+# Labels
+tk.Label(root, text="Общее число лампочек:").grid(row=0, column=0)
+tk.Label(root, text="Число перегоревших лампочек:").grid(row=1, column=0)
+tk.Label(root, text="Число выбранных лампочек:").grid(row=2, column=0)
+tk.Label(root, text="Число эксперементов:").grid(row=3, column=0)
+tk.Label(root, text="Значение k:", anchor='e').grid(row=1, column=10, sticky='e') 
+tk.Label(root, text="Значение a:", anchor='e').grid(row=2, column=10, sticky='e') 
+tk.Label(root, text="Кол-во проверок:", anchor='e').grid(row=3, column=10, sticky='e') 
+
+
+
+# Run button
+btn_run = tk.Button(root, text="Начать", command=run_experiment)
+btn_run.grid(row=4, column=0, columnspan=2)
+btn_run.config(font=('Arial', 12))  # Increase font size
+
+# Table
+tree = ttk.Treeview(root, columns=('Value', 'Occurrences', 'Frequency'), height=10)
+tree.heading('#0', text='', anchor='center')  # Hide the header
+tree.column('#0', width=0)  # Hide the column
+tree.heading('#1', text='Значения с.в.')
+tree.heading('#2', text='Вероятность')
+tree.heading('#3', text='Частота')
+tree.grid(row=5, column=0, columnspan=2)
+
+
+# Table2
+tree2 = ttk.Treeview(root, columns=('Value', 'Occurrences', 'Frequency'), height=10)
+tree2.heading('#0', text='', anchor='center')  # Hide the header
+tree2.column('#0', width=0)  # Hide the column
+tree2.heading('#1', text='Значения с.в.')
+tree2.heading('#2', text='Вероятность')
+tree2.heading('#3', text='Частота')
+tree2.grid(row=5, column=10, columnspan=2)
+
+# Table3
+tree3 = ttk.Treeview(root, columns=('Принято', 'Не принято'), height=1)
+tree3.heading('#0', text='', anchor='center')  # Hide the header
+tree3.column('#0', width=0)  # Hide the column
+tree3.heading('#1', text='Принято')
+tree3.heading('#2', text='Не принято')
+tree3.grid(row=20, column=10, columnspan=2)
+
+
+# Button for showing image
+btn_show_image = tk.Button(root, text="Вариант №15", command=show_image)
+btn_show_image.grid(row=0, column=2, columnspan=2)
+btn_show_image.config(font=('Arial', 12))  # Increase font size
+
+root.mainloop()
